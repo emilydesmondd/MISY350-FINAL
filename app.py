@@ -22,8 +22,6 @@ if 'role' not in st.session_state:
 
 users = [
 {
-"users": [
-{
 "id": "1",
 "email": "emdesmo@udel.edu",
 "full_name": "Emily Desmond",
@@ -42,11 +40,7 @@ users = [
 "company": "Tech Solutions",
 "position": "Senior Software Engineer"
 }
-],
-"requests": []
-}
 ]
-
 connection_requests = [
     {
         "request_id": "011101",
@@ -63,36 +57,29 @@ connection_requests = [
     }
 ]
 
-json_connections = Path("connection_request.json")
-
-if json_connections.exists() and json_connections.stat().st_size > 0:
-    with json_connections.open("r", encoding="utf-8") as f:
-        connection_requests = json.load(f)
-
 json_users = Path("users.json")
+json_connections = Path("connections.json")
 
-default_data = {"users": [], "requests": []}
 
-if json_users.exists() and json_users.stat().st_size > 0:
-    with open(json_users, "r") as f:
-        data = json.load(f)
+def load_users(json_users):
+    if json_users.exists() and json_users.stat().st_size > 0:
+        with open(json_users, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
 
-    if isinstance(data, list):
-        users = data
-        connection_requests = []
-    else:
-        users = data.get("users", [])
-        connection_requests = data.get("requests", [])
-else:
-    users = []
-    connection_requests = []
+def load_connections(json_connections):
+    if json_connections.exists() and json_connections.stat().st_size > 0:
+        with open(json_connections, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
 
-def save_data():
+def save_data_users():
     with open(json_users, "w") as f:
-        json.dump({
-            "users": users,
-            "requests": connection_requests
-        }, f, indent=4)
+        json.dump(users, f, indent=4)
+
+def save_data_connections():
+    with open(json_connections, "w") as f:
+        json.dump(connection_requests, f, indent=4)
 
 # ================= Sign Up Screen =================
 if st.session_state["page"] == "signup":
