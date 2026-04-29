@@ -1,3 +1,5 @@
 connection_requests.json
 users.json
 .env
+logs.json
+email_context.json
