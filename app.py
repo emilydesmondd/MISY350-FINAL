@@ -837,8 +837,7 @@ def render_ai_email_helper() -> None:
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
-    # Try to load existing user/assistant interactions from file
-        logs = load_logs("chat_logs.json")
+        logs = load_logs(json_logs)
         for log in logs:
             st.session_state.messages.append({"role": "user", "content":
             log["user_message"]})
