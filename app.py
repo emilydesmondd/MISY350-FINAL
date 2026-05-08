@@ -1,3 +1,5 @@
+from turtle import left
+
 import streamlit as st
 import json
 from pathlib import Path
@@ -7,9 +9,8 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
-
 json_users = Path("users.json")
-json_connections = Path("connections.json")
+json_connections = Path("connection_requests.json")
 json_AI_EMAIL = Path('email_context.json')
 json_logs = Path('logs.json')
 
@@ -54,7 +55,6 @@ connections = [
 ai_email_context = []
 
 logs = []
-
 
 # ================= Data Layer =================
 def load_data(json_path: Path, default_data: list) -> list:
@@ -576,43 +576,105 @@ def render_advisor_dashboard(users: list, connection_requests: list) -> None:
                 st.info("Select a connection to edit.")
 
 
-
-def render_student_home(users: list) -> None:
+def render_student_home(users: list, connection_requests: list) -> None:
     st.header(f"Welcome, {st.session_state['user']['full_name']}!")
     st.subheader("Your Network")
-    st.divider()
 
-    profile_found = False
-    col1, col2, col3 = st.columns([3, 3, 3])
+    user_email = st.session_state["user"]["email"].strip().lower()
+
+    user_connections = [
+    req for req in connection_requests
+    if req.get("student_email","").strip().lower() == user_email]
+
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
         with st.container(border=True):
-            st.markdown("### Bubble")
+            st.metric("Total Connections", len(user_connections))
 
     with col2:
         with st.container(border=True):
-            st.markdown("### Resume")
-            with st.expander("Upload Your Resume"):
-                st.file_uploader("Choose a file", type=["pdf", "docx"], key="resume_uploader")
-
-        with st.container(border=True):
-            st.markdown("### Bubble")
+            st.metric(
+                "Approved Requests",
+                len([req for req in user_connections if req.get("status","").lower() == "approved"])
+            )
 
     with col3:
         with st.container(border=True):
-            st.markdown("### Your Details")
-            for prof in users:
-                if prof.get("email", "").strip().lower() == st.session_state["user"]["email"].strip().lower():
-                    profile_found = True
-                    st.markdown(f"**Name:** {prof.get('full_name', '')}")
-                    st.markdown(f"**Email:** {prof.get('email', '')}")
-                    st.markdown(f"**Major:** {prof.get('major', '')}")
-                    st.markdown(f"**School:** {prof.get('school', '')}")
-                    st.markdown(f"**Grad Year:** {prof.get('grad_year', '')}")
+            st.metric(
+                "Pending Requests",
+                len([req for req in user_connections if req.get("status","").lower() == "pending"])
+            )
 
-            if not profile_found:
-                st.info("Complete your profile to see your details here.")
+    with col4:
+        with st.container(border=True):
+            st.metric("Emails Sent", len(logs))
 
+
+    left, right = st.columns([2, 1])
+    with left:
+        with st.container(border=True):
+            user_email = st.session_state["user"]["email"].strip().lower()
+
+            user_connections = [
+                conn for conn in connection_requests
+                if conn.get("student_email", "").strip().lower() == user_email
+            ]
+
+            if user_connections:
+                st.subheader("Recent Connections")
+
+                recent_connections = user_connections[-5:]
+
+                for conn in recent_connections:
+                    with st.container(border=True):
+                        col1, col2 = st.columns([3,1])
+
+                        with col1:
+                            st.markdown(
+                                f"**{conn.get('advisor_name', '')}**  \n"
+                                f"{conn.get('advisor_company', '')}"
+                            )
+
+                        with col2:
+                            status = conn.get('status', '')
+
+                            if status == "Approved":
+                                st.success(status)
+                            elif status == "Pending":
+                                st.warning(status)
+                            elif status == "Rejected":
+                                st.error(status)
+                            else:
+                                st.info(status)
+            else:
+                st.info("No connections yet. Start by sending a connection request!")
+
+        with st.container(border=True):
+            st.subheader("Recent Activity")
+            st.markdown("Under Construction")
+    with right:
+        with st.container(border=True):
+            st.subheader("Your Details")
+            st.write(f"**Name:** {st.session_state['user']['full_name']}")
+            st.write(f"**Email:** {st.session_state['user']['email']}")
+            st.write(f"**Major:** {st.session_state['user']['major']}")
+            st.write(f"**School:** {st.session_state['user']['school']}")
+            st.write(f"**Grad Year:** {st.session_state['user']['grad_year']}")
+
+        with st.container(border=True):
+            st.subheader("Resume")
+            st.file_uploader("Upload Your Resume", type=["pdf"])
+
+        with st.container(border=True):
+            st.subheader("Quick Actions")
+
+            if st.button("➕ Add Connection", use_container_width=True):
+                st.session_state.page = "student_dashboard"
+            if st.button("✉️ Generate Email", use_container_width=True):
+                st.session_state.page = "AI Email Helper"
+            if st.button("👥 View All Connections", use_container_width=True):
+                st.session_state.page = "student_dashboard"
 
 
 def render_student_dashboard(users: list, connection_requests: list) -> None:
@@ -808,6 +870,84 @@ def render_student_dashboard(users: list, connection_requests: list) -> None:
 def render_ai_email_helper() -> None:
     st.markdown("### AI Email Helper")
 
+    def get_data(json_AI_EMAIL):
+        if not json_AI_EMAIL.exists():
+            return "[]"
+        with open(json_AI_EMAIL, "r") as f:
+            data = json.load(f)
+            return json.dumps(data, indent=2)
+
+    def load_logs(json_logs):
+        if json_logs.exists():
+            with open(json_logs, "r") as f:
+                return json.load(f)
+        else:
+            return []
+
+    def save_logs(json_logs, logs):
+        with open(json_logs, "w") as f:
+            json.dump(logs, f, indent=2)
+
+    load_dotenv()
+    api_key = os.getenv("API_KEY")
+    if not api_key:
+        st.error("OPENAI_API_KEY was not found. Check your .env file.")
+        st.stop()
+    client = OpenAI(api_key=api_key)
+
+    email_context = get_data(json_AI_EMAIL)
+
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+        logs = load_logs(json_logs)
+        for log in logs:
+            st.session_state.messages.append({"role": "user", "content":
+            log["user_message"]})
+            st.session_state.messages.append({"role": "assistant", "content":
+            log["assistant_message"]})
+    # If there is no saved history, show a starter assistant bubble
+        if len(st.session_state.messages) == 0:
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": "Hi! Ask me a question about writing the perfect email."
+    })
+
+    chat_container = st.container()
+
+    with chat_container:
+        for msg in st.session_state.messages:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+
+    user_input = st.chat_input("Type your question...")
+    if user_input:
+    # Update state and UI with user message
+        st.session_state.messages.append({"role": "user", "content": user_input})
+        with chat_container.chat_message("user"):
+            st.markdown(user_input)
+
+    # --- Service Layer ---
+    def build_ai_prompt(email_context):
+        "Builds the hidden instructions and business context for the AI."""
+        return (
+        "You are a helpful company assistant.\n"
+        "Answer user questions based ONLY on the email data provided below.\n"
+        "If the answer is not in the email data, say you do not have enough information.\n\n"
+        f"ORDER DATA:\n{email_context}"
+    )
+
+    def get_ai_response(client: OpenAI, email_context: str, chat_history: list):
+            "Combines hidden instructions with visible chat history, then calls the AI."
+            ai_prompt = build_ai_prompt(email_context)
+            ai_prompt_message = [{"role": "system", "content": ai_prompt}]
+            messages = ai_prompt_message + chat_history
+            response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+            temperature=0.2
+    )
+            return response.choices[0].message.content
+
 
 def render_sidebar() -> None:
     if not st.session_state["logged_in"]:
@@ -872,7 +1012,7 @@ def main() -> None:
     st.set_page_config(
         page_title="Network Manager",
         page_icon=":globe_with_meridians:",
-        layout="centered",
+        layout="wide",
     )
 
     initialize_session_state()
@@ -899,7 +1039,7 @@ def main() -> None:
             render_advisor_dashboard(loaded_users, loaded_connection_requests)
     elif current_role == "Student":
         if current_page == "student_home_page":
-            render_student_home(loaded_users)
+            render_student_home(loaded_users, loaded_connection_requests)
         elif current_page == "student_dashboard":
             render_student_dashboard(loaded_users, loaded_connection_requests)
         elif current_page == "AI_email_helper":

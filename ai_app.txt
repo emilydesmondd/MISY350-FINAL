@@ -98,3 +98,23 @@ def render_ai_email_helper() -> None:
     # NO! Because we manually drew the new messages into the `chat_container` using
     # `with chat_container.chat_message(...)`, the UI is already visually up to date.
     # Streamlit will automatically persist them from session state on the next natural run.
+
+
+
+            st.markdown("### Your Details")
+            for prof in users:
+                if prof.get("email", "").strip().lower() == st.session_state["user"]["email"].strip().lower():
+                    profile_found = True
+                    st.markdown(f"**Name:** {prof.get('full_name', '')}")
+                    st.markdown(f"**Email:** {prof.get('email', '')}")
+                    st.markdown(f"**Major:** {prof.get('major', '')}")
+                    st.markdown(f"**School:** {prof.get('school', '')}")
+                    st.markdown(f"**Grad Year:** {prof.get('grad_year', '')}")
+
+            if not profile_found:
+                st.info("Complete your profile to see your details here.")
+
+
+                        st.markdown("### Resume")
+            with st.expander("Upload Your Resume"):
+                st.file_uploader("Choose a file", type=["pdf", "docx"], key="resume_uploader")
