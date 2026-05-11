@@ -4,5 +4,5 @@ pathlib
 uuid
 time
 os
-dotenv 
+python-dotenv
 openai 
