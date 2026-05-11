@@ -1,0 +1,10 @@
+streamlit
+python-dotenv
+json
+requests
+passlib
+bcrypt
+folium
+streamlit-folium
+geopy
+openai
