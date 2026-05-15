@@ -97,6 +97,11 @@ def render_profile_setup(users: list) -> None:
                     value=st.session_state["user"].get("major", ""),
                     key="profile_major",
                 )
+                grad_year = st.text_input(
+                    "Graduation Year",
+                    value=st.session_state["user"].get("grad_year", ""),
+                    key="profile_grad_year",
+                )
 
         if st.button("Save Profile", type="primary", use_container_width=True):
                 updated_user = update_profile(
@@ -106,6 +111,7 @@ def render_profile_setup(users: list) -> None:
                     profile_email,
                     profile_school,
                     profile_major,
+                    grad_year
                 )
 
                 if updated_user is not None:
