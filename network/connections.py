@@ -1,5 +1,7 @@
 import uuid
 
+from model import ConnectionRequest
+
 
 def add_connection_request(
     connection_requests: list,
@@ -12,6 +14,12 @@ def add_connection_request(
     advisor_company: str,
     notes: str,
 ) -> None:
+    
+    request = ConnectionRequest(
+    student_name,
+    advisor_name,
+    "Pending"
+)
     connection_requests.append(
         {
             "request_id": str(uuid.uuid4()),
