@@ -39,6 +39,7 @@ def update_profile(
     major: str = "",
     company: str = "",
     position: str = "",
+    grad_year: str = "",
     about: str = "",
 ):
     for user in users:
@@ -49,6 +50,7 @@ def update_profile(
             user["major"] = major.strip()
             user["company"] = company.strip()
             user["position"] = position.strip()
+            user["grad_year"] = grad_year.strip()
             user["about"] = about.strip()
             return user
 
