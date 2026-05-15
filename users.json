@@ -1,0 +1,106 @@
+[
+    {
+        "id": "1",
+        "email": "emdesmo@udel.edu",
+        "full_name": "Emily Desmond",
+        "password": "testing123",
+        "role": "Student",
+        "school": "University of Delaware",
+        "major": "Management Information Systems",
+        "grad_year": 2026
+    },
+    {
+        "id": "2",
+        "email": "michael.chen@amazon.com",
+        "full_name": "Michael Chen",
+        "password": "testing123",
+        "role": "Advisor",
+        "company": "Amazon",
+        "position": "Software Development Engineer II"
+    },
+    {
+        "id": "3",
+        "email": "jessica.smith@deloitte.com",
+        "full_name": "Jessica Smith",
+        "password": "testing123",
+        "role": "Advisor",
+        "company": "Deloitte",
+        "position": "Consultant - Technology Strategy"
+    },
+    {
+        "id": "4",
+        "email": "alex.rodriguez@microsoft.com",
+        "full_name": "Alex Rodriguez",
+        "password": "testing123",
+        "role": "Advisor",
+        "company": "Microsoft",
+        "position": "Cloud Solutions Architect"
+    },
+    {
+        "id": "5",
+        "email": "sarah.patel@google.com",
+        "full_name": "Sarah Patel",
+        "password": "testing123",
+        "role": "Advisor",
+        "company": "Google",
+        "position": "Product Manager"
+    },
+    {
+        "id": "6",
+        "email": "david.thompson@ibm.com",
+        "full_name": "David Thompson",
+        "password": "testing123",
+        "role": "Advisor",
+        "company": "IBM",
+        "position": "Data Analyst"
+    },
+    {
+        "id": "7",
+        "email": "brian.lee@jpmorgan.com",
+        "full_name": "Brian Lee",
+        "password": "testing123",
+        "role": "Advisor",
+        "company": "JPMorgan Chase",
+        "position": "Technology Analyst"
+    },
+    {
+        "id": "8",
+        "email": "olivia.wilson@udel.edu",
+        "full_name": "Olivia Wilson",
+        "password": "testing123",
+        "role": "Student",
+        "school": "University of Delaware",
+        "major": "Finance",
+        "grad_year": 2025
+    },
+    {
+        "id": "6b62eceb-2fd0-4843-8152-6b3964caa282",
+        "email": "princessp@gmail.com",
+        "full_name": "Princess Peach",
+        "password": "123",
+        "role": "Advisor"
+    },
+    {
+        "id": "2181b6be-3478-417c-9ad6-78e9754c24e2",
+        "email": "kbowser@aol.com",
+        "full_name": "king bowser",
+        "password": "abc",
+        "role": "Advisor"
+    },
+    {
+        "id": "c9b1e5d4-8f3a-4c2b-9e7a-5d6f8a9b0c1d",
+        "email": "student@test.com",
+        "full_name": "Student User",
+        "password": "student123",
+        "role": "Student"
+    },
+    {
+        "id": "d0c2f6e5-9g4b-5d3c-0f8b-6e7f9c0d1e2f",
+        "email": "instructor@test.com",
+        "full_name": "Instructor User",
+        "password": "instructor123",
+        "role": "Instructor"
+    }
+
+
+]
