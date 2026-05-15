@@ -30,22 +30,26 @@ def authenticate_user(users: list, email: str, password: str):
     )
 
 
-def update_profile(users: list, current_email: str, full_name: str, email: str, school: str, major: str):
+def update_profile(
+    users: list,
+    current_email: str,
+    full_name: str,
+    email: str,
+    school: str = "",
+    major: str = "",
+    company: str = "",
+    position: str = "",
+    about: str = "",
+):
     for user in users:
         if user.get("email", "").strip().lower() == current_email.strip().lower():
             user["full_name"] = full_name.strip()
             user["email"] = email.strip()
             user["school"] = school.strip()
             user["major"] = major.strip()
-            return user
-    return None
-
-    for user in users:
-        if user.get("email", "").strip().lower() == current_email.strip().lower():
-            user["full_name"] = full_name.strip()
-            user["email"] = email.strip()
             user["company"] = company.strip()
             user["position"] = position.strip()
             user["about"] = about.strip()
             return user
+
     return None
