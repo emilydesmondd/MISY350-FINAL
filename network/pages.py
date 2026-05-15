@@ -563,9 +563,9 @@ def render_student_home(users: list, connection_requests: list) -> None:
             st.subheader("Your Details")
             st.write(f"**Name:** {st.session_state['user']['full_name']}")
             st.write(f"**Email:** {st.session_state['user']['email']}")
-            st.write(f"**Major:** {st.session_state['user']['major']}")
-            st.write(f"**School:** {st.session_state['user']['school']}")
-            st.write(f"**Grad Year:** {st.session_state['user']['grad_year']}")
+            st.write(f"**Major:** {st.session_state['user'].get('major', 'Not Provided')}")
+            st.write(f"**School:** {st.session_state['user'].get('school', 'Not Provided')}")
+            st.write(f"**Grad Year:** {st.session_state['user'].get('grad_year', 'Not Provided')}")
 
         with st.container(border=True):
             resume_path = f"resumes/{st.session_state['user']['email']}.pdf"
